@@ -1,9 +1,8 @@
-FROM debian:buster-slim AS builder
-LABEL maintainer "marcel.waldvogel@trifence.ch"
+FROM debian:buster AS builder
 
-# Compile shallot
+# Compile shallot; use caching
 RUN apt update
-RUN apt -y install build-essential libssl-dev
+RUN apt -y --no-install-recommends install build-essential libssl-dev
 ADD ./shallot /shallot
 WORKDIR /shallot
 RUN ./configure && make
@@ -14,11 +13,9 @@ LABEL maintainer "marcel.waldvogel@trifence.ch"
 
 # Base packages
 RUN apt update && \
-    apt -y --no-install-recommends install \
-    nginx \
-    tor torsocks && \
+    apt -y --no-install-recommends install nginx tor && \
     apt clean && \
-    rm -Rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 COPY --from=builder /shallot/shallot /bin
 
 # Security and permissions
