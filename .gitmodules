@@ -1,0 +1,3 @@
+[submodule "shallot"]
+	path = shallot
+	url = https://github.com/MarcelWaldvogel/Shallot.git

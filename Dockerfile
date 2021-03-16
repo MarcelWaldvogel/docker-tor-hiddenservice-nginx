@@ -1,6 +1,5 @@
-FROM debian:jessie
-
-LABEL maintainer "opsxcq@strm.sh"
+FROM debian:buster
+LABEL maintainer "marcel.waldvogel@trifence.ch"
 
 # Base packages
 RUN apt-get update && \
