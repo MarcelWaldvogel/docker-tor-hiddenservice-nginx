@@ -15,7 +15,7 @@ VERSIONTAGS = $(shell echo ${VERSION} | sed -n -e 's,^VERSION=\(\([0-9]*.[0-9]*\
 # linux/i386,linux/arm64/v8,linux/mips64le,linux/ppc64le,linux/s390x.
 # Not using i386 as it has compile problems (build for x86-64 by default in the
 # i386 container); probably not used anymore anyway.
-PLATFORMS  = linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+PLATFORMS  = linux/amd64,linux/i386,linux/arm64,linux/arm/v7,linux/arm/v6
 
 # Where buildx probably lives (ugly, sorry)
 BUILDXDETECT = ${HOME}/.docker/cli-plugins/docker-buildx
@@ -23,14 +23,15 @@ BUILDXDETECT = ${HOME}/.docker/cli-plugins/docker-buildx
 # Just one of the many files created
 QEMUDETECT = /proc/sys/fs/binfmt_misc/qemu-m68k
 
-docker-multiarch: qemu buildx docker-multiarch-builder
-	docker buildx build --builder docker-multiarch --pull --load \
+BUILDCMD = docker buildx build --builder docker-multiarch --pull \
 		--build-arg VERSIONMATCH=${VERSIONMATCH} \
 		--platform ${PLATFORMS} ${VERSIONTAGS} \
-		-t ${BASETAG}:latest .
+		-t ${BASETAG}:latest
+docker-multiarch: qemu buildx docker-multiarch-builder
+	${BUILDCMD} .
 
-docker-multiarch-push: docker-multiarch
-	docker push ${VERSIONTAGS} -t ${BASETAG}:latest
+docker-multiarch-push: qemu buildx docker-multiarch-builder
+	${BUILDCMD} --push .
 
 .PHONY: qemu buildx docker-multiarch-builder docker-multiarch docker-multiarch-push
 
