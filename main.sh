@@ -44,8 +44,6 @@ then
         echo '[-] Please run this container with generate argument to initialize your web page'
         exit -1
     fi
-    echo '[+] Initializing local clock'
-    ntpdate -B -q 0.debian.pool.ntp.org
     echo '[+] Starting tor'
     tor -f /etc/tor/torrc &
     echo '[+] Starting nginx'

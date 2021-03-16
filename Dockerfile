@@ -16,7 +16,7 @@ LABEL maintainer "marcel.waldvogel@trifence.ch"
 RUN apt update && \
     apt -y --no-install-recommends install \
     nginx \
-    tor torsocks ntpdate && \
+    tor torsocks && \
     apt clean && \
     rm -Rf /var/lib/apt/lists/*
 COPY --from=builder /shallot/shallot /bin
