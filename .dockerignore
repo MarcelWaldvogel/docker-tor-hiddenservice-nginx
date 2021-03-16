@@ -1,0 +1,6 @@
+.git
+print.png
+
+# Do not import locally compiled files into docker build process
+*.o
+/shallot/shallot
