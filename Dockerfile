@@ -24,10 +24,6 @@ COPY --from=builder /shallot/shallot /bin
 # Security and permissions
 RUN useradd --system --uid 666 -M --shell /usr/sbin/nologin hidden
 
-# Configure nginx logs to go to Docker log collection (via stdout/stderr)
-RUN ln --symbolic --force /dev/stdout /var/log/nginx/access.log
-RUN ln --symbolic --force /dev/stderr /var/log/nginx/error.log
-
 # Main script
 ADD ./main.sh /main.sh
 
@@ -43,4 +39,3 @@ WORKDIR /web
 
 ENTRYPOINT ["/main.sh"]
 CMD ["serve"]
-
