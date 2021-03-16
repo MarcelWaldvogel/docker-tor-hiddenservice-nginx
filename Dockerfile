@@ -1,25 +1,25 @@
-FROM debian:buster
+FROM debian:buster-slim AS builder
+LABEL maintainer "marcel.waldvogel@trifence.ch"
+
+# Compile shallot
+RUN apt update
+RUN apt -y install build-essential libssl-dev
+ADD ./shallot /shallot
+WORKDIR /shallot
+RUN ./configure && make
+
+
+FROM debian:buster-slim
 LABEL maintainer "marcel.waldvogel@trifence.ch"
 
 # Base packages
-RUN apt-get update && \
-    apt-get -y install \
+RUN apt update && \
+    apt -y --no-install-recommends install \
     nginx \
-    tor torsocks ntpdate
-
-# Compile shallot
-ADD ./shallot /shallot
-RUN apt-get -y install \
-    build-essential \
-    libssl-dev && \
-    cd /shallot && \
-    ./configure && \
-    make && \
-    mv ./shallot /bin && \
-    cd / && \
-    rm -Rf /shallot && \
-    apt-get -y purge build-essential libssl-dev && \
+    tor torsocks ntpdate && \
+    apt clean && \
     rm -Rf /var/lib/apt/lists/*
+COPY --from=builder /shallot/shallot /bin
 
 # Security and permissions
 RUN useradd --system --uid 666 -M --shell /usr/sbin/nologin hidden
